@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Olivia · Portfolio</title>
+<style>
+html { scroll-behavior: smooth; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; color: #111; background: #fff; }
+a { color: inherit; text-decoration: none; }
+.container { max-width: 1100px; padding: 0 24px; margin: 0 auto; }
+.nav { position: fixed; top: 0; left: 0; right: 0; height: 64px; display: flex; align-items: center; background: rgba(255,255,255,0.7); backdrop-filter: saturate(180%) blur(12px); border-bottom: 1px solid #eee; z-index: 20; }
+.nav .inner { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.nav .brand { font-weight: 800; letter-spacing: .5px; }
+.nav .links { display: flex; gap: 16px; font-size: 14px; }
+.btn { display: inline-block; padding: 12px 20px; border-radius: 8px; border: 1px solid transparent; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; font-size: 14px; transition: transform .15s ease, background-color .2s ease, border-color .2s ease, color .2s ease; }
+.btn:active { transform: scale(.98); }
+.btn-primary { background: #facc15; border-color: #facc15; color: #111; }
+.btn-primary:hover { background: #eab308; border-color: #eab308; }
+.btn-outline { background: transparent; border-color: #fff; color: #fff; }
+.btn-outline:hover { transform: scale(1.05); }
+.hero { position: relative; min-height: 100svh; display: flex; align-items: center; color: #fff; background: radial-gradient(1200px 600px at 20% 30%, rgba(255,255,255,.12), transparent), linear-gradient(100deg, #0f172a 0%, #1f2937 50%, #111827 100%); }
+.hero .overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.35), transparent); pointer-events: none; }
+.hero .content { position: relative; padding: 120px 0 64px; }
+.hero h1 { margin: 0 0 16px; font-size: clamp(40px, 7vw, 72px); line-height: 1.05; font-weight: 900; }
+.hero p { margin: 0 0 20px; font-size: 18px; opacity: .95; }
+.hero .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.socials { display: flex; align-items: center; gap: 14px; padding-top: 12px; }
+.icon { width: 24px; height: 24px; display: inline-block; }
+.panel { position: relative; min-height: 100svh; display: flex; align-items: center; background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.35), transparent), linear-gradient(135deg, #0f172a, #1f2937 60%, #111827); color: #fff; }
+.panel .inner { width: 100%; }
+.section-title { font-size: clamp(36px, 6vw, 64px); font-weight: 900; margin: 0 0 8px; }
+.section-sub { font-size: 18px; opacity: .9; margin: 0; }
+.hku-wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: center; }
+.hku-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; opacity: 0; transform: translateX(32px); transition: opacity .25s ease, transform .25s ease; width: min(36vw, 760px); justify-self: end; margin-left: auto; margin-right: clamp(0px, 2vw, 24px); position: relative; left: 200px; }
+.hku-grid.show { opacity: 1; transform: none; }
+#hku { transition: transform .25s ease; }
+#hku:hover { transform: scale(1.06); }
+.mini-card { position: relative; height: 400px; border-radius: 18px; box-shadow: 0 12px 28px rgba(0,0,0,.2); overflow: hidden; background: transparent; }
+/* 模糊填充层：铺满且虚化，避免留白 */
+.mini-card::before { content: ""; position: absolute; inset: 0; background-image: var(--img); background-size: cover; background-position: center; filter: blur(12px) brightness(.92); transform: scale(1.08); }
+/* 主图层：等比完整展示，无法铺满处由 ::before 补齐 */
+.mini-hero { position: absolute; inset: 0; background-image: var(--img); background-size: cover; background-repeat: no-repeat; background-position: center; filter: saturate(.85) brightness(.92) contrast(.98); }
+.mini-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.28), transparent 60%); pointer-events: none; }
+.mini-pill { position: absolute; left: 16px; right: 16px; bottom: 16px; background: #fff; color: #111; border-radius: 999px; text-align: center; font-weight: 800; padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.content-wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: center; }
+.content-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; opacity: 0; transform: translateX(32px); transition: opacity .25s ease, transform .25s ease; width: min(30vw, 640px); justify-self: end; margin-left: auto; margin-right: clamp(0px, 2vw, 24px); position: relative; left: 200px; }
+.content-grid.show { opacity: 1; transform: none; }
+#content-title { transition: transform .25s ease; white-space: nowrap; }
+#content-title:hover { transform: scale(1.06); }
+.phone-card { position: relative; height: 520px; border-radius: 44px; background: #0b0f17; padding: 14px; box-shadow: 0 22px 44px rgba(0,0,0,.35); overflow: hidden; }
+.phone-card::before { content: ""; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 110px; height: 26px; background: #0b0f17; border-radius: 14px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,.25) inset; }
+.phone-screen { position: absolute; inset: 14px; border-radius: 36px; background-image: var(--img); background-size: cover; background-position: center; filter: saturate(.85) brightness(.92) contrast(.98); }
+.global-wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: center; }
+.global-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; opacity: 0; transform: translateX(32px); transition: opacity .25s ease, transform .25s ease; width: min(40vw, 900px); justify-self: end; margin-left: auto; margin-right: clamp(0px, 2vw, 24px); position: relative; left: 200px; }
+.global-grid.show { opacity: 1; transform: none; }
+#about-creator .mini-card { height: 320px; }
+#global-title { transition: transform .25s ease; white-space: nowrap; }
+#global-title:hover { transform: scale(1.06); }
+.resume { position: relative; padding: 80px 0; background: #f3f4f6 url('public/CV.JPG') center/cover no-repeat; }
+.resume::before { content: none; }
+.resume h2 { font-size: 40px; font-weight: 900; margin: 0 0 32px; }
+.resume-title { color: #fff; }
+.resume-rows { display: grid; gap: 64px; }
+.resume-row { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; padding: 24px; padding-block: 3rem; padding-block: 2lh; border-radius: 24px; background: linear-gradient(145deg, rgba(243,244,246,.82), rgba(229,231,235,.72)); border: 1px solid rgba(17,17,17,.06); box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 10px 24px rgba(0,0,0,.12); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.resume .container { position: relative; z-index: 1; width: 75%; margin-left: 0; margin-right: auto; }
+.resume-aside { opacity: .75; font-size: 22px; font-weight: 800; }
+.resume-aside div { position: sticky; top: 84px; }
+.resume-list { display: grid; gap: 36px; }
+/* 语言切换按钮（右上角） */
+.resume .container { position: relative; }
+.lang-toggle { position: absolute; top: 16px; right: 24px; padding: 8px 12px; border: 1px solid #111; border-radius: 6px; background: #fff; font-weight: 700; font-size: 13px; cursor: pointer; }
+.timeline { display: flex; gap: 16px; }
+.tl-rail { display: flex; flex-direction: column; align-items: center; margin-right: 8px; }
+.tl-dot { width: 10px; height: 10px; border-radius: 999px; background: #737373; }
+.tl-line { width: 1px; flex: 1; background: #737373; margin-top: 8px; }
+.tl-body { flex: 1; }
+.tl-head { display: flex; align-items: baseline; justify-content: space-between; font-weight: 700; margin-bottom: 6px; }
+.tl-date { font-size: 12px; opacity: .7; }
+.tl-desc, .tl-list { opacity: .85; margin: 0; }
+.tl-list { padding-left: 18px; }
+footer { padding: 32px 24px; font-size: 14px; opacity: .7; text-align: center; }
+@media (min-width: 992px) {
+  .resume-row { grid-template-columns: 220px 1fr; }
+  .resume .container { margin-left: 4em; }
+}
+.fade-in { opacity: 0; transform: translateY(24px); animation: fadeIn .7s ease .1s forwards; }
+@keyframes fadeIn { to { opacity: 1; transform: none; } }
+/* 页面背景图设置：public 目录中的大图全屏覆盖 */
+#hero { background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.35), transparent), url('public/olivia-hero.jpg') center/cover no-repeat; }
+#about-education { background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.35), transparent), url('public/about-education.jpg') center/cover no-repeat; }
+#about-work { background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.35), transparent), url('public/about-work.jpg') center/cover no-repeat; }
+#about-creator { background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.35), transparent), url('public/about-hobby.jpg') center/cover no-repeat; }
+#about-content { background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.35), transparent), url('public/about-content.JPG') center/cover no-repeat; }
+/* 结尾页 */
+.outro { background: #f3f4f6; color: #111; display: flex; align-items: center; justify-content: center; min-height: 50svh; padding: 80px 0; text-align: center; }
+.outro h3 { font-size: clamp(24px, 4vw, 36px); margin: 0 0 16px; font-weight: 800; }
+.pill { display: inline-block; padding: 12px 20px; border-radius: 999px; background: rgba(255,255,255,.6); backdrop-filter: blur(6px); border: 1px solid rgba(17,17,17,.2); font-weight: 700; }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container inner">
+      <div class="brand">Olivia</div>
+      <div class="links">
+        <a href="#about-education">关于我</a>
+        <a href="#resume">个人履历</a>
+        <a href="#outro-email">联系我</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section id="hero" class="hero">
+      <div class="overlay"></div>
+      <div class="container content fade-in">
+        <h1>Hi, I'm Olivia</h1>
+        <p>HKU Graduate · AI Strategic advisor · Global Citizen</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#outro">联系我</a>
+          <a class="btn btn-outline" href="#about-education">关于我</a>
+          <a class="btn btn-outline" href="#resume">个人履历</a>
+        </div>
+        <div class="socials">
+          <a aria-label="GitHub" href="#" title="GitHub">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.11.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.4-1.34-1.77-1.34-1.77-1.09-.75.08-.74.08-.74 1.2.09 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.92 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.16 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.64.24 2.86.12 3.16.77.84 1.23 1.91 1.23 3.22 0 4.6-2.81 5.61-5.49 5.91.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.58A12 12 0 0 0 12 .5z"/></svg>
+          </a>
+          <a aria-label="Twitter" href="#" title="Twitter">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.633 7.997c.013.18.013.36.013.54 0 5.5-4.187 11.84-11.84 11.84-2.354 0-4.54-.686-6.38-1.873.33.04.648.053.99.053a8.37 8.37 0 0 0 5.2-1.79 4.18 4.18 0 0 1-3.9-2.9c.26.04.5.066.77.066.37 0 .73-.053 1.07-.14a4.17 4.17 0 0 1-3.35-4.1v-.053c.56.31 1.2.5 1.89.526a4.16 4.16 0 0 1-1.86-3.46c0-.78.21-1.5.58-2.13a11.84 11.84 0 0 0 8.6 4.36 4.7 4.7 0 0 1-.1-.95 4.16 4.16 0 0 1 7.2-2.85 8.2 8.2 0 0 0 2.64-1 4.18 4.18 0 0 1-1.83 2.3 8.3 8.3 0 0 0 2.39-.64 9 9 0 0 1-2.08 2.16z"/></svg>
+          </a>
+          <a aria-label="LinkedIn" href="#" title="LinkedIn">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5.001 2.5 2.5 0 0 1 0-5zM4 9h2v12H4zM9 9h2v1.7h.03c.28-.53 1.02-1.08 2.1-1.08 2.25 0 2.67 1.48 2.67 3.41V21h-2v-5.2c0-1.24-.02-2.84-1.73-2.84-1.74 0-2.01 1.36-2.01 2.75V21H9z"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div id="about-education" class="panel">
+        <div class="container inner hku-wrap">
+          <div class="hku-left">
+            <h2 class="section-title" id="hku">HKU</h2>
+            <p class="section-sub">Master of Economics</p>
+          </div>
+          <div class="hku-grid" id="hku-grid" aria-hidden="true">
+            <div class="mini-card" style="--img: url('public/bspa.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">Student Union</div>
+            </div>
+            <div class="mini-card" style="--img: url('public/hightable.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">High Table Dinner</div>
+            </div>
+            <div class="mini-card" style="--img: url('public/volunteer.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">HK Environmental Volunteer</div>
+            </div>
+            <div class="mini-card" style="--img: url('public/scholarship.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">Scholarship Recipients</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="about-creator" class="panel">
+        <div class="container inner global-wrap">
+          <div class="global-left">
+            <h2 class="section-title" id="global-title">Global Citizen</h2>
+            <p class="section-sub">10 years of travel to 17 countries, 67 cities</p>
+          </div>
+          <div class="global-grid" id="global-grid" aria-hidden="true">
+            <div class="mini-card" style="--img: url('public/UAE.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">Dubai</div>
+            </div>
+            <div class="mini-card" style="--img: url('public/JAPAN.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">Tokyo</div>
+            </div>
+            <div class="mini-card" style="--img: url('public/TAIWAN.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">Taiwan</div>
+            </div>
+            <div class="mini-card" style="--img: url('public/XINJIANG.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">Xinjiang</div>
+            </div>
+            <div class="mini-card" style="--img: url('public/BALI.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">Bali</div>
+            </div>
+            <div class="mini-card" style="--img: url('public/MANILA.JPG')">
+              <div class="mini-hero"></div>
+              <div class="mini-pill">Manila</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="about-content" class="panel">
+        <div class="container inner content-wrap">
+          <div class="content-left">
+            <h2 class="section-title" id="content-title">Content Creator</h2>
+            <p class="section-sub">xiao hong shu</p>
+          </div>
+          <div class="content-grid" id="content-grid" aria-hidden="true">
+            <div class="phone-card" style="--img: url('public/redbook1.jpg')">
+              <div class="phone-screen"></div>
+            </div>
+            <div class="phone-card" style="--img: url('public/redbook2.jpg')">
+              <div class="phone-screen"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="about-work" class="panel">
+        <div class="container inner">
+          <h2 class="section-title">AI Strategic Consultant</h2>
+          <p class="section-sub">Deloitte Associate</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resume" class="resume">
+      <div class="container">
+        <button id="resume-lang-toggle" class="lang-toggle" type="button">EN</button>
+        <h2 id="resume-title" class="resume-title">个人履历</h2>
+        <div class="resume-rows">
+          <!-- Row 1: 教育背景 ↔ 香港大学 -->
+          <div class="resume-row">
+            <div class="resume-aside">
+              <div id="aside-edu">教育背景</div>
+            </div>
+            <div class="resume-list">
+              <div class="timeline">
+                <div class="tl-rail">
+                  <div class="tl-dot"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-body">
+                  <div class="tl-head">
+                    <span id="edu-uni">香港大学 - Master of Economics</span>
+                    <span class="tl-date" id="edu-date">2022-2024</span>
+                  </div>
+                  <p class="tl-desc" id="edu-desc">专业前10% ｜ 《关于发展区块链产业的若干设想与假设》</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Row 2: 工作经验 ↔ Deloitte -->
+          <div class="resume-row">
+            <div class="resume-aside">
+              <div id="aside-work">工作经验</div>
+            </div>
+            <div class="resume-list">
+              <div class="timeline">
+                <div class="tl-rail">
+                  <div class="tl-dot"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-body">
+                  <div class="tl-head">
+                    <span id="deloitte-title">Deloitte - AI Strategic Consultant</span>
+                    <span class="tl-date" id="deloitte-date">2024.10 — 至今</span>
+                  </div>
+                  <ul class="tl-list">
+                    <li id="del-li1">参与多个AI战略咨询项目，包括AI行业研究报告撰写、企业人工智能成熟度评估、企业十五五AI战略蓝图规划、提示词工程设计和微调等工作</li>
+                    <li id="del-li2">参与多个传统战略咨询项目，包括企业内部现状根因分析、企业内部财务指标分析、行业分析及规模测算、标杆企业洞察等工作</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Row 3: 实习经验 ↔ 广发固收及其它实习 -->
+          <div class="resume-row">
+            <div class="resume-aside">
+              <div id="aside-intern">实习经验</div>
+            </div>
+            <div class="resume-list">
+              <div class="timeline">
+                <div class="tl-rail">
+                  <div class="tl-dot"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-body">
+                  <div class="tl-head">
+                    <span id="quant-title">广发证券 - 固定收益 量化研究助理</span>
+                    <span class="tl-date" id="quant-date">2023.10 — 2024.04</span>
+                  </div>
+                  <ul class="tl-list">
+                    <li id="quant-li1">债基量化研究：使用 Python 完成多类债基/货基的量化优选评分模型，并协助完成多场面向银行客户的路演与培训</li>
+                    <li id="quant-li2">纯债研究课题：构建纯债产品标签体系，按多维度为产品打标，形成产品备选池</li>
+                    <li id="quant-li3">日常研究：撰写市场新规解读与公司财务分析，参与会议与路演，监测债基异常波动</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline">
+                <div class="tl-rail">
+                  <div class="tl-dot"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-body">
+                  <div class="tl-head">
+                    <span id="keeta-title">美团香港 KeeTa - C端 用户策略运营实习生</span>
+                    <span class="tl-date" id="keeta-date">2023.06 — 2023.09</span>
+                  </div>
+                  <ul class="tl-list">
+                    <li id="keeta-li1">用户研究：独立完成3组 AB 实验、分层转化实验和品类偏好实验；基于统计结果设计方案并推进策略落地，潜客点击率较大陆美团同期高 2pp</li>
+                    <li id="keeta-li2">数据分析：提取日常与活动数据，完成 40 组提数需求并独立搭建数据看板</li>
+                    <li id="keeta-li3">产品策划：独立设计并落地七夕活动，活动当日潜客点击率与转化率均提升至 3 倍</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline">
+                <div class="tl-rail">
+                  <div class="tl-dot"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-body">
+                  <div class="tl-head">
+                    <span id="cms-title">招商证券 - 固定收益（新财富）信用债研究助理</span>
+                    <span class="tl-date" id="cms-date">2023.03 — 2023.06</span>
+                  </div>
+                  <ul class="tl-list">
+                    <li id="cms-li1">报告撰写：参与信用债与城投专题研报的框架构思、文字撰写、数据收集与异常波动跟踪</li>
+                    <li id="cms-li2">调研走访：按尽调清单梳理问题并与客户沟通，整理多场会议纪要与路演材料</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline">
+                <div class="tl-rail">
+                  <div class="tl-dot"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-body">
+                  <div class="tl-head">
+                    <span id="consumer-title">广发证券 - 产业研究院 大消费组 行业研究助理</span>
+                    <span class="tl-date" id="consumer-date">2022.11 — 2023.01</span>
+                  </div>
+                  <ul class="tl-list">
+                    <li id="consumer-li1">培育钻石行业研究：整理行业资料与调研数据，形成研究框架与洞察</li>
+                    <li id="consumer-li2">智慧家居行业研究：进行市场规模测算与 CAGR 计算，分析竞争格局与需求侧因素</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline">
+                <div class="tl-rail">
+                  <div class="tl-dot"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-body">
+                  <div class="tl-head">
+                    <span id="lark-title">字节跳动 · 飞书 - 产品运营实习生</span>
+                    <span class="tl-date" id="lark-date">2021.12 — 2022.02</span>
+                  </div>
+                  <ul class="tl-list">
+                    <li id="lark-li1">收集 toB 端用户反馈并识别合理需求，参与排期与优先级管理</li>
+                    <li id="lark-li2">跟踪问题与反馈数据，协同研发优化问答与支持流程，降低投诉</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="outro" class="outro">
+      <div class="container">
+        <h3 id="outro-line">Ready to build something amazing?</h3>
+        <div class="pill" id="outro-email">zhangyutian1217@gmail.com</div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    © <span id="year"></span> Portfolio · Olivia
+  </footer>
+  <script>
+    document.getElementById('year').textContent = String(new Date().getFullYear());
+    (function () {
+      var texts = {
+        zh: {
+          'resume-title': '个人履历',
+          'aside-edu': '教育背景',
+          'aside-work': '工作经验',
+          'aside-intern': '实习经验',
+          'edu-uni': '香港大学 - Master of Economics',
+          'edu-date': '2022-2024',
+          'edu-desc': '专业前10% ｜ 《关于发展区块链产业的若干设想与假设》',
+          'deloitte-title': 'Deloitte - AI Strategic Consultant',
+          'deloitte-date': '2024.10 — 至今',
+          'del-li1': '参与多个AI战略咨询项目，包括AI行业研究报告撰写、企业人工智能成熟度评估、企业十五五AI战略蓝图规划、提示词工程设计和微调等工作',
+          'del-li2': '参与多个传统战略咨询项目，包括企业内部现状根因分析、企业内部财务指标分析、行业分析及规模测算、标杆企业洞察等工作',
+          'quant-title': '广发证券 - 固定收益 量化研究助理',
+          'quant-date': '2023.10 — 2024.04',
+          'quant-li1': '债基量化研究：使用 Python 完成多类债基/货基的量化优选评分模型，并协助完成多场面向银行客户的路演与培训',
+          'quant-li2': '纯债研究课题：构建纯债产品标签体系，按多维度为产品打标，形成产品备选池',
+          'quant-li3': '日常研究：撰写市场新规解读与公司财务分析，参与会议与路演，监测债基异常波动',
+          'cms-title': '招商证券 - 固定收益（新财富）信用债研究助理',
+          'cms-date': '2023.03 — 2023.06',
+          'cms-li1': '报告撰写：参与信用债与城投专题研报的框架构思、文字撰写、数据收集与异常波动跟踪',
+          'cms-li2': '调研走访：按尽调清单梳理问题并与客户沟通，整理多场会议纪要与路演材料',
+          'consumer-title': '广发证券 - 产业研究院 大消费组 行业研究助理',
+          'consumer-date': '2022.11 — 2023.01',
+          'consumer-li1': '培育钻石行业研究：整理行业资料与调研数据，形成研究框架与洞察',
+          'consumer-li2': '智慧家居行业研究：进行市场规模测算与 CAGR 计算，分析竞争格局与需求侧因素',
+          'lark-title': '字节跳动 · 飞书 - 产品运营实习生',
+          'lark-date': '2021.12 — 2022.02',
+          'lark-li1': '收集 toB 端用户反馈并识别合理需求，参与排期与优先级管理',
+          'lark-li2': '跟踪问题与反馈数据，协同研发优化问答与支持流程，降低投诉',
+          'keeta-title': '美团香港 KeeTa - C端 用户策略运营实习生',
+          'keeta-date': '2023.06 — 2023.09',
+          'keeta-li1': '用户研究：独立完成3组 AB 实验、分层转化实验和品类偏好实验；基于统计结果设计方案并推进策略落地，潜客点击率较大陆美团同期高 2pp',
+          'keeta-li2': '数据分析：提取日常与活动数据，完成 40 组提数需求并独立搭建数据看板',
+          'keeta-li3': '产品策划：独立设计并落地七夕活动，活动当日潜客点击率与转化率均提升至 3 倍'
+        },
+        en: {
+          'resume-title': 'Resume',
+          'aside-edu': 'Education',
+          'aside-work': 'Work Experience',
+          'aside-intern': 'Internships',
+          'edu-uni': 'The University of Hong Kong – Master of Economics',
+          'edu-date': '2022–2024',
+          'edu-desc': 'Top 10% | “Some Proposals and Hypotheses on Developing the Blockchain Industry”',
+          'deloitte-title': 'Deloitte – AI Strategic Consultant',
+          'deloitte-date': 'Oct 2024 — Present',
+          'del-li1': 'Participated in AI strategy projects: industry reports, AI maturity assessments, five‑year AI blueprint planning, prompt engineering and fine‑tuning',
+          'del-li2': 'Contributed to traditional strategy projects: root‑cause analysis, internal financial KPIs, industry analysis and market sizing, benchmarking insights',
+          'quant-title': 'GF Securities – Quantitative Research Assistant (Fixed Income)',
+          'quant-date': 'Oct 2023 — Apr 2024',
+          'quant-li1': 'Quant research on bond funds: built Python scoring models for bond/money funds; supported client roadshows and trainings for banks',
+          'quant-li2': 'Pure bond study: developed product labeling system across multiple dimensions to build a candidate pool',
+          'quant-li3': 'Routine research: authored policy interpretations and company financial analyses; attended meetings/roadshows; monitored abnormal bond‑fund moves',
+          'cms-title': 'China Merchants Securities – Credit Bond Research Assistant (Fixed Income, New Fortune)',
+          'cms-date': 'Mar 2023 — Jun 2023',
+          'cms-li1': 'Report writing: co‑designed frameworks, drafted content, collected data, and tracked abnormal moves in credit and LGFV bonds',
+          'cms-li2': 'Field research: compiled due‑diligence checklists, communicated with clients, prepared meeting minutes and roadshow materials',
+          'consumer-title': 'GF Securities – Industry Research Institute, Consumer Sector – Research Assistant',
+          'consumer-date': 'Nov 2022 — Jan 2023',
+          'consumer-li1': 'Lab‑grown diamonds: synthesized industry materials and survey data, built research framework and insights',
+          'consumer-li2': 'Smart home: performed TAM modeling and CAGR calculations; analyzed competition and demand drivers',
+          'lark-title': 'ByteDance · Lark (Feishu) – Product Operations Intern',
+          'lark-date': 'Dec 2021 — Feb 2022',
+          'lark-li1': 'Collected B2B user feedback and identified valid requirements; supported prioritization and scheduling',
+          'lark-li2': 'Tracked issues and feedback data; collaborated with R&D to optimize Q&A and support flows, reducing complaints',
+          'keeta-title': 'Meituan Hong Kong KeeTa – B2C User Strategy Operations Intern',
+          'keeta-date': 'Jun 2023 — Sep 2023',
+          'keeta-li1': 'User research: ran 3 A/B tests, layered conversion, and category‑preference experiments; designed plans from stats and drove rollout; prospective‑user CTR 2pp above Mainland Meituan',
+          'keeta-li2': 'Data analysis: extracted daily and campaign data; fulfilled 40 data requests and built dashboards',
+          'keeta-li3': 'Product planning: independently designed and launched the Qixi campaign; CTR and conversion tripled on the day'
+        }
+      };
+      var current = 'zh';
+      var btn = document.getElementById('resume-lang-toggle');
+      function switchResume(lang) {
+        var dict = texts[lang];
+        Object.keys(dict).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.textContent = dict[id];
+        });
+        btn.textContent = lang === 'zh' ? 'EN' : '中文';
+      }
+      btn.addEventListener('click', function () {
+        current = current === 'zh' ? 'en' : 'zh';
+        switchResume(current);
+      });
+      // 初始化为中文，保持按钮为 EN
+    })();
+    (function () {
+      var hku = document.getElementById('hku');
+      var grid = document.getElementById('hku-grid');
+      if (hku && grid) {
+        hku.addEventListener('mouseenter', function () {
+          grid.classList.add('show');
+        });
+        hku.addEventListener('mouseleave', function () {
+          grid.classList.remove('show');
+        });
+      }
+    })();
+    (function () {
+      var title = document.getElementById('content-title');
+      var grid = document.getElementById('content-grid');
+      if (title && grid) {
+        title.addEventListener('mouseenter', function () {
+          grid.classList.add('show');
+        });
+        title.addEventListener('mouseleave', function () {
+          grid.classList.remove('show');
+        });
+      }
+    })();
+    (function () {
+      var title = document.getElementById('global-title');
+      var grid = document.getElementById('global-grid');
+      if (title && grid) {
+        title.addEventListener('mouseenter', function () {
+          grid.classList.add('show');
+        });
+        title.addEventListener('mouseleave', function () {
+          grid.classList.remove('show');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
